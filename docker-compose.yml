@@ -17,7 +17,6 @@ services:
       COMPOSER_MEMORY_LIMIT: 2G
     working_dir: '/var/www/html'
     extra_hosts:
-    # for step debugging with Xdebug
       - 'host.docker.internal:host-gateway'
 
   nginx:
@@ -49,5 +48,17 @@ services:
     volumes:
       - ./db/dump:/app/dump
       - ./db/postgresql:/var/lib/postgresql/data
-volumes:
-  postgresql:
+
+  frontend:
+    container_name: 'react-frontend'
+    image: node:14
+    networks:
+      - skeletonbr
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - '3000:3000'
+    command: npm start
+    depends_on:
+      - php
